@@ -6,7 +6,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-export const usersTable = mysqlTable("users", {
+export const users = mysqlTable("users", {
   id: int().autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   userName: varchar("user_name", { length: 255 }).unique(),
@@ -16,4 +16,16 @@ export const usersTable = mysqlTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
   deletedAt: timestamp("deleted_at").notNull().defaultNow().onUpdateNow(),
+});
+
+export const sessions = mysqlTable("sessions", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users?.id, { onDelete: "cascade" }),
+  userAgent: text("user_agent").notNull(),
+  ip: varchar("ip", { length: 255 }).notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });
