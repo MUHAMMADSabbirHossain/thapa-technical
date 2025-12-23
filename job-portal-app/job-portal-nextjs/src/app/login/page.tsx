@@ -107,7 +107,7 @@ const LoginForm = () => {
 
             {/* Submit Button */}
             <Button type="submit" className="w-full">
-              Create Account
+              Login
             </Button>
 
             <div className="text-center">
