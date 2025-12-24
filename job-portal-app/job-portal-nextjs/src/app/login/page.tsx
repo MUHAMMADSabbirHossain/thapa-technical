@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginUserAction } from "@/features/auth/server/auth.actions";
 import { Eye, EyeOff, Lock, Mail, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 interface LoginFormData {
   email: string;
@@ -34,9 +36,21 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+
+    try {
+      const loginData = {
+        email: formData?.email?.trim(),
+        password: formData?.password?.trim(),
+      };
+
+      const result = await loginUserAction(loginData);
+
+      if (result?.status === "success") toast.success(result?.message);
+      else toast.error(result?.message);
+    } catch (error) {}
   };
 
   return (
