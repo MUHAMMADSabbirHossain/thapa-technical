@@ -52,9 +52,21 @@ const Registration = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+
+    const registrationData = {
+      name: formData?.name?.trim(),
+      userName: formData?.userName?.trim(),
+      email: formData?.email?.trim(),
+      password: formData?.password?.trim(),
+      confirmPassword: formData?.confirmPassword?.trim(),
+      role: formData?.role,
+    };
+
+    const result = await registrationAction(registrationData);
+    console.log(result);
   };
 
   return (
@@ -69,7 +81,7 @@ const Registration = () => {
         </CardHeader>
 
         <CardContent>
-          <form action={registrationAction} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>

@@ -1,5 +1,6 @@
 import {
   int,
+  mysqlEnum,
   mysqlTable,
   text,
   timestamp,
@@ -9,9 +10,12 @@ import {
 export const users = mysqlTable("users", {
   id: int().autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  userName: varchar("user_name", { length: 255 }).unique(),
+  userName: varchar("user_name", { length: 255 }).unique().notNull(),
   password: text("password").notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
+  role: mysqlEnum("role", ["admin", "applicant", "employer"]).default(
+    "applicant"
+  ),
   phoneNumber: varchar("phone_number", { length: 255 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
