@@ -20,6 +20,7 @@ import {
 import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { registrationAction } from "./registrationAction.action";
 
 interface RegistrationFormData {
   name: string;
@@ -68,7 +69,7 @@ const Registration = () => {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form action={registrationAction} className="space-y-6">
             {/* Name Field */}
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
@@ -76,6 +77,7 @@ const Registration = () => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="name"
+                  name="name"
                   type="text"
                   placeholder="Enter your full name"
                   required
@@ -95,6 +97,7 @@ const Registration = () => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="userName"
+                  name="userName"
                   type="text"
                   placeholder="Choose a username"
                   required
@@ -114,6 +117,7 @@ const Registration = () => {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="Enter your email"
                   required
@@ -130,6 +134,7 @@ const Registration = () => {
             <div className="space-y-2 w-full">
               <Label htmlFor="role">I am a *</Label>
               <Select
+                name="role"
                 value={formData?.role}
                 onValueChange={(value: "applicant" | "employer") =>
                   handleInputChange("role", value)
@@ -152,6 +157,7 @@ const Registration = () => {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
                   required
@@ -184,6 +190,7 @@ const Registration = () => {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="confirmPassword"
+                  name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   required
