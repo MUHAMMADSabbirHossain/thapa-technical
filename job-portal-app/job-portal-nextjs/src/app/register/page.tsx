@@ -21,6 +21,7 @@ import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { registrationAction } from "./registrationAction.action";
+import { toast } from "sonner";
 
 interface RegistrationFormData {
   name: string;
@@ -66,10 +67,13 @@ const Registration = () => {
     };
 
     if (formData?.password !== formData?.confirmPassword)
-      return alert("Password does not match");
+      return toast.error("Password does not match");
 
     const result = await registrationAction(registrationData);
     console.log(result);
+
+    if (result?.status === "success") toast.success(result?.message);
+    else toast.error(result?.message);
   };
 
   return (

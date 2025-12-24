@@ -18,18 +18,27 @@ export const registrationAction = async (data: {
   password: string;
   role: "applicant" | "employer";
 }) => {
-  const { name, userName, email, password, role } = data;
+  try {
+    const { name, userName, email, password, role } = data;
 
-  const hashedPassword = await argon2.hash(password);
+    const hashedPassword = await argon2.hash(password);
 
-  const result = await db.insert(users).values({
-    name,
-    userName,
-    email,
-    password: hashedPassword,
-    role,
-  });
-  console.log(result);
+    await db.insert(users).values({
+      name,
+      userName,
+      email,
+      password: hashedPassword,
+      role,
+    });
 
-  return result;
+    return {
+      status: "success",
+      message: "registration completed successfully",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: "unknown error occurred! Please try again later.",
+    };
+  }
 };
