@@ -2,6 +2,7 @@
 
 import db from "@/config/db";
 import { users } from "@/drizzle/schema";
+import argon2 from "argon2";
 
 // export const registrationAction = async (formData: FormData) => {
 //   console.log(Object.fromEntries(formData.entries()));
@@ -19,11 +20,13 @@ export const registrationAction = async (data: {
 }) => {
   const { name, userName, email, password, role } = data;
 
+  const hashedPassword = await argon2.hash(password);
+
   const result = await db.insert(users).values({
     name,
     userName,
     email,
-    password,
+    password: hashedPassword,
     role,
   });
   console.log(result);

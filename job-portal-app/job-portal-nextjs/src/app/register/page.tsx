@@ -65,6 +65,9 @@ const Registration = () => {
       role: formData?.role,
     };
 
+    if (formData?.password !== formData?.confirmPassword)
+      return alert("Password does not match");
+
     const result = await registrationAction(registrationData);
     console.log(result);
   };
