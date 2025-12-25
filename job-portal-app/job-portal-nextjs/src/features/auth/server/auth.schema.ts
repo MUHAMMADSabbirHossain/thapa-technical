@@ -55,3 +55,18 @@ export const registerUserWithConfirmSchema = registerUserSchema
 export type RegisterUserWithConfirmData = z.infer<
   typeof registerUserWithConfirmSchema
 >;
+
+export const loginUserSchema = z.object({
+  email: z
+    .email("Invalid email address")
+    .trim()
+    .max(255, "Email must be at most 255 characters long")
+    .toLowerCase(),
+
+  password: z
+    .string()
+    .trim()
+    .min(8, "Password must be at least 8 characters long"),
+});
+
+export type LoginUserData = z.infer<typeof loginUserSchema>;

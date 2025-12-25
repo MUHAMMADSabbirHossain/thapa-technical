@@ -4,15 +4,15 @@ import db from "@/config/db";
 import { users } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import argon2 from "argon2";
+import { LoginUserData, loginUserSchema } from "./auth.schema";
 
-type LoginData = {
-  email: string;
-  password: string;
-};
-
-export const loginUserAction = async (data: LoginData) => {
+export const loginUserAction = async (data: LoginUserData) => {
   try {
-    const { email, password } = data;
+    const { data: validatedData, error } = loginUserSchema.safeParse(data);
+
+    if (error) return { status: "error", message: error?.issues[0].message };
+
+    const { email, password } = validatedData;
 
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
