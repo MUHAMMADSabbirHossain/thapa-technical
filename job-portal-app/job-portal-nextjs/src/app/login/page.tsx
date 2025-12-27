@@ -11,42 +11,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUserAction } from "@/features/auth/server/auth.actions";
+import {
+  LoginUserData,
+  loginUserSchema,
+} from "@/features/auth/server/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
 const LoginForm = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginUserSchema),
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(formData);
+  const onSubmit = async (data: LoginUserData) => {
+    console.log(data);
+    const validate = loginUserSchema.safeParse(data);
 
     try {
-      const loginData = {
-        email: formData?.email?.trim(),
-        password: formData?.password?.trim(),
-      };
-
-      const result = await loginUserAction(loginData);
+      const result = await loginUserAction(data);
 
       if (result?.status === "success") toast.success(result?.message);
       else toast.error(result?.message);
@@ -67,7 +60,7 @@ const LoginForm = () => {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email">Email Address *</Label>
@@ -78,13 +71,17 @@ const LoginForm = () => {
                   type="email"
                   placeholder="Enter your email"
                   required
-                  value={formData?.email}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange("email", e.target.value)
-                  }
-                  className={`pl-10 `}
+                  {...register("email")}
+                  className={`pl-10 ${
+                    errors?.email ? "border-destructive" : ""
+                  }`}
                 />
               </div>
+              {errors?.email && (
+                <p className="text-sm text-destructive">
+                  {errors?.email?.message}
+                </p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -97,11 +94,10 @@ const LoginForm = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
                   required
-                  value={formData.password}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  className={`pl-10 pr-10 `}
+                  {...register("password")}
+                  className={`pl-10 pr-10 ${
+                    errors?.password ? "border-destructive" : ""
+                  }`}
                 />
                 <Button
                   type="button"
@@ -117,6 +113,11 @@ const LoginForm = () => {
                   )}
                 </Button>
               </div>
+              {errors?.password && (
+                <p className="text-sm text-destructive">
+                  {errors?.password?.message}
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
