@@ -6,6 +6,7 @@ import {
   RegisterUserData,
   registerUserSchema,
 } from "@/features/auth/server/auth.schema";
+import { createSessionAndSetCookies } from "@/features/auth/server/use-cases/sessions";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 
@@ -37,13 +38,16 @@ export const registrationAction = async (data: RegisterUserData) => {
 
     const hashedPassword = await argon2.hash(password);
 
-    await db.insert(users).values({
+    const [result] = await db.insert(users).values({
       name,
       userName,
       email,
       password: hashedPassword,
       role,
     });
+    console.log(result);
+
+    await createSessionAndSetCookies(result?.insertId);
 
     return {
       status: "success",
