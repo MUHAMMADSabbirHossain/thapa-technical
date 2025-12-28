@@ -22,7 +22,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { registrationAction } from "./registrationAction.action";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   RegisterUserWithConfirmData,
   registerUserWithConfirmSchema,
@@ -34,9 +34,13 @@ const Registration = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(registerUserWithConfirmSchema),
+    defaultValues: {
+      role: "applicant",
+    },
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -44,6 +48,8 @@ const Registration = () => {
     useState<boolean>(false);
 
   const onSubmit = async (data: RegisterUserWithConfirmData) => {
+    console.log(data);
+
     const result = await registrationAction(data);
     console.log(result);
 
@@ -135,16 +141,22 @@ const Registration = () => {
 
             {/* Role Selection */}
             <div className="space-y-2 w-full">
-              <Label htmlFor="role">I am a *</Label>
-              <Select {...register("role")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="applicant">Job Applicant</SelectItem>
-                  <SelectItem value="employer">Employer</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="role">I am an *</Label>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="applicant">Job Applicant</SelectItem>
+                      <SelectItem value="employer">Employer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors?.role && (
                 <p className="text-sm text-destructive">
                   {errors?.role?.message}
