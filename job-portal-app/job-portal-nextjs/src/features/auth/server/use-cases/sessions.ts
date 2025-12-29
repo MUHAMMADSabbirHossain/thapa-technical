@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { getIPAddress } from "./locaion";
 import db from "@/config/db";
 import { sessions, users } from "@/drizzle/schema";
-import { SESSION_LIFETIME } from "@/config/constant";
+import { SESSION_LIFETIME, SESSION_REFRESH_TIME } from "@/config/constant";
 import { eq } from "drizzle-orm";
 
 type CreateSessionData = {
@@ -87,5 +87,35 @@ export const validateSessionAndGetUser = async (session: string) => {
     .where(eq(sessions?.id, hashedToken))
     .innerJoin(users, eq(users?.id, sessions?.userId));
 
+  // if session not found
+  if (!user) return null;
+
+  // if session expired
+  if (Date.now() >= user?.session?.expiresAt?.getTime()) {
+    await invalidateSession(user?.session?.id);
+
+    return null;
+  }
+
+  // if session is about to expire
+  if (
+    Date.now() >=
+    user?.session?.expiresAt?.getTime() - SESSION_REFRESH_TIME * 1000
+  ) {
+    await db
+      .update(sessions)
+      .set({
+        expiresAt: new Date(Date.now() + SESSION_LIFETIME * 1000),
+      })
+      .where(eq(sessions?.id, user?.session?.id));
+
+    return user;
+  }
+
+  // if session is valid
   return user;
+};
+
+const invalidateSession = async (id: string) => {
+  await db.delete(sessions).where(eq(sessions?.id, id));
 };
