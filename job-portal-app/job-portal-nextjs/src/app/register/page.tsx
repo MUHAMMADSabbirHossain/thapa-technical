@@ -28,6 +28,7 @@ import {
   registerUserWithConfirmSchema,
 } from "@/features/auth/server/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 const Registration = () => {
   const {
@@ -43,6 +44,8 @@ const Registration = () => {
     },
   });
 
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -53,8 +56,15 @@ const Registration = () => {
     const result = await registrationAction(data);
     console.log(result);
 
-    if (result?.status === "success") toast.success(result?.message);
-    else toast.error(result?.message);
+    if (result?.status === "success") {
+      toast.success(result?.message);
+
+      if (data?.role === "employer") {
+        router.push("/employer-dashboard");
+      } else {
+        router.push("/applicant-dashboard");
+      }
+    } else toast.error(result?.message);
   };
 
   return (
