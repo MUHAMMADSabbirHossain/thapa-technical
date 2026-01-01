@@ -16,7 +16,9 @@ const DashboardLayout = async ({
   return (
     <div className="flex min-h-screen bg-background">
       <EmployerSidebar />
-      <main className="container mx-auto bg-background">{children}</main>
+      <main className="container mx-auto bg-background mt-5 ml-70 mr-5">
+        {children}
+      </main>
     </div>
   );
 };
