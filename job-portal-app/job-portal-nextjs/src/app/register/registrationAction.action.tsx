@@ -38,26 +38,28 @@ export const registrationAction = async (data: RegisterUserData) => {
 
     const hashedPassword = await argon2.hash(password);
 
-    const [result] = await db.insert(users).values({
-      name,
-      userName,
-      email,
-      password: hashedPassword,
-      role,
+    await db.transaction(async (trx) => {
+      const [result] = await trx.insert(users).values({
+        name,
+        userName,
+        email,
+        password: hashedPassword,
+        role,
+      });
+      console.log(result);
+
+      if (role === "applicant") {
+        await trx.insert(applicants).values({
+          id: result?.insertId,
+        });
+      } else {
+        await trx.insert(employers).values({
+          id: result?.insertId,
+        });
+      }
+
+      await createSessionAndSetCookies(result?.insertId, trx);
     });
-    console.log(result);
-
-    if (role === "applicant") {
-      await db.insert(applicants).values({
-        id: result?.insertId,
-      });
-    } else {
-      await db.insert(employers).values({
-        id: result?.insertId,
-      });
-    }
-
-    await createSessionAndSetCookies(result?.insertId);
 
     return {
       status: "success",
