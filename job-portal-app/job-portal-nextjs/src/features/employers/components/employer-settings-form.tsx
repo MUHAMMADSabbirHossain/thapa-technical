@@ -4,9 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Building2, Calendar, FileText, Globe, MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
+import {
+  Briefcase,
+  Building2,
+  Calendar,
+  FileText,
+  Globe,
+  MapPin,
+} from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
 
 interface IFormInput {
   username: string;
@@ -16,10 +30,31 @@ interface IFormInput {
   yearOfEstablishment: string;
   location: string;
   websiteUrl: string;
+  organizationType: OrganizationType;
+  teamSize: TeamSizeType;
 }
 
+const organizationTypeOptions = [
+  "development",
+  "design",
+  "marketing",
+  "others",
+] as const;
+type OrganizationType = (typeof organizationTypeOptions)[number];
+
+const teamSizeOptions = [
+  "just me",
+  "2-10",
+  "11-50",
+  "51-100",
+  "101-500",
+  "501-1000",
+  "1001+",
+] as const;
+type TeamSizeType = (typeof teamSizeOptions)[number];
+
 const EmployerSettingsForm = () => {
-  const { register, handleSubmit } = useForm<IFormInput>();
+  const { register, handleSubmit, control } = useForm<IFormInput>();
 
   const onSubmit = (data: IFormInput) => {
     console.log(data);
@@ -61,6 +96,67 @@ const EmployerSettingsForm = () => {
                 placeholder="Tell us about your company, what you do, and your mission..."
                 className="pl-10 min-h-[120px] resize-none "
                 {...register("description")}
+              />
+            </div>
+          </div>
+
+          {/* When you run const { control } = useForm(), you create a specific instance of a form. The <Controller /> component is isolated; it doesn't know which form it belongs to. Passing control={control} connects this specific input to that specific useForm hook. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="organizationType">Organization Type *</Label>
+              <Controller
+                name="organizationType"
+                control={control}
+                render={({ field }) => (
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                    <Select
+                      value={field?.value || ""}
+                      onValueChange={field?.onChange}
+                    >
+                      <SelectTrigger className="pl-10 w-full">
+                        <SelectValue placeholder="Select organization type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {organizationTypeOptions?.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {/* {capitalizeWords(type)} */}
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="teamSize">Team Size *</Label>
+              <Controller
+                name="teamSize"
+                control={control}
+                render={({ field }) => (
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                    <Select
+                      value={field?.value || "just me"}
+                      onValueChange={field?.onChange}
+                    >
+                      <SelectTrigger className="pl-10 w-full">
+                        <SelectValue placeholder="Select team size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teamSizeOptions?.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {/* {capitalizeWords(type)} */}
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               />
             </div>
           </div>
