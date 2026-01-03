@@ -22,6 +22,13 @@
       "when": 1767237893600,
       "tag": "0002_opposite_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1767431990839,
+      "tag": "0003_mute_firebrand",
+      "breakpoints": true
     }
   ]
 }

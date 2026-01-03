@@ -48,7 +48,7 @@ export const employers = mysqlTable("employers", {
   organizationType: varchar("organization_type", { length: 100 }),
   teamSize: varchar("team_size", { length: 50 }),
   yearOfEstablishment: year("year_of_establishment"),
-  website: varchar("website", { length: 255 }),
+  websiteUrl: varchar("website_url", { length: 255 }),
   location: varchar("location", { length: 255 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),

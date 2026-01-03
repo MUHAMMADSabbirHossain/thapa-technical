@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { updateEmployerProfileAction } from "@/features/auth/server/employer.action";
 import {
   Briefcase,
   Building2,
@@ -21,6 +22,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface IFormInput {
   username: string;
@@ -56,8 +58,16 @@ type TeamSizeType = (typeof teamSizeOptions)[number];
 const EmployerSettingsForm = () => {
   const { register, handleSubmit, control } = useForm<IFormInput>();
 
-  const onSubmit = (data: IFormInput) => {
+  const onSubmit = async (data: IFormInput) => {
     console.log(data);
+
+    const response = await updateEmployerProfileAction(data);
+
+    if (response?.status === "success") {
+      toast.success(response?.message);
+    } else {
+      toast.error(response?.message);
+    }
   };
 
   return (
