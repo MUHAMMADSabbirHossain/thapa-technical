@@ -19,6 +19,7 @@ import {
   Calendar,
   FileText,
   Globe,
+  Loader,
   MapPin,
 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
@@ -71,7 +72,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<EmployerProfileData>({
     defaultValues: {
       name: initialData?.name || "",
@@ -306,8 +307,14 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
               </p>
             )}
           </div>
+          <div className="flex items-center gap-4 pt-4">
+            <Button type="submit">
+              {isSubmitting && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting ? "Saving changes..." : "Save Changes"}
+            </Button>
 
-          <Button type="submit">Save Changes</Button>
+            {!isDirty && <p className="">No changes made</p>}
+          </div>
         </form>
       </CardContent>
     </Card>
