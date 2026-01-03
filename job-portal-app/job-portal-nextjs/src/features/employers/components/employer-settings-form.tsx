@@ -62,13 +62,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // ] as const;
 // type TeamSizeType = (typeof teamSizeOptions)[number];
 
-const EmployerSettingsForm = () => {
+interface Props {
+  initialData?: Partial<EmployerProfileData>;
+}
+
+const EmployerSettingsForm = ({ initialData }: Props) => {
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<EmployerProfileData>({
+    defaultValues: {
+      name: initialData?.name || "",
+      description: initialData?.description || "",
+      organizationType: initialData?.organizationType || undefined,
+      teamSize: initialData?.teamSize || undefined,
+      yearOfEstablishment: initialData?.yearOfEstablishment,
+      location: initialData?.location || "",
+      websiteUrl: initialData?.websiteUrl || "",
+    },
+
     resolver: zodResolver(employerProfileSchema),
   });
 
