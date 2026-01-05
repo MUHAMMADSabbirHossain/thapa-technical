@@ -31,6 +31,7 @@ import {
   teamSizes,
 } from "../employers.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Tiptap from "@/components/text-editor";
 
 // interface IFormInput {
 //   username: string;
@@ -132,6 +133,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
               </p>
             )}
           </div>
+
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description">Company Description *</Label>
@@ -151,6 +153,25 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
                 {errors?.description?.message}
               </p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Controller
+              name="description"
+              control={control}
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <Label>Description *</Label>
+                  <Tiptap content={field?.value} onChange={field?.onChange} />
+
+                  {fieldState?.error?.message && (
+                    <p className="text-destructive text-sm">
+                      {fieldState?.error?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
           </div>
 
           {/* When you run const { control } = useForm(), you create a specific instance of a form. The <Controller /> component is isolated; it doesn't know which form it belongs to. Passing control={control} connects this specific input to that specific useForm hook. */}
@@ -307,6 +328,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
               </p>
             )}
           </div>
+
           <div className="flex items-center gap-4 pt-4">
             <Button type="submit">
               {isSubmitting && <Loader className="mr-2 h-4 w-4 animate-spin" />}
