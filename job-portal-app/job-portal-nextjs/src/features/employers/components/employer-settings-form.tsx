@@ -32,6 +32,7 @@ import {
 } from "../employers.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Tiptap from "@/components/text-editor";
+import { UploadButton } from "@/lib/uploadthing";
 
 // interface IFormInput {
 //   username: string;
@@ -112,6 +113,22 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" {...register("email")} />
           </div> */}
+
+          <div className="border border-dashed p-2">
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={(res) => {
+                // Do something with the response
+                console.log("Files: ", res);
+                alert("Upload Completed");
+              }}
+              onUploadError={(error: Error) => {
+                // Do something with the error.
+                alert(`ERROR! ${error.message}`);
+              }}
+            />{" "}
+            <span>Upload Image</span>
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name *</Label>
