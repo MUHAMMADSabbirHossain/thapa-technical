@@ -20,6 +20,7 @@ export const users = mysqlTable("users", {
     "applicant"
   ),
   phoneNumber: varchar("phone_number", { length: 255 }),
+  avatarUrl: text("avatar_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
   deletedAt: timestamp("deleted_at").notNull().defaultNow().onUpdateNow(),
@@ -43,7 +44,7 @@ export const employers = mysqlTable("employers", {
     .references(() => users?.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }),
   description: text("description"),
-  avatarUrl: text("avatart_url"),
+  // avatarUrl: text("avatart_url"),
   bannerImageUrl: text("banner_image_url"),
   organizationType: varchar("organization_type", { length: 100 }),
   teamSize: varchar("team_size", { length: 50 }),

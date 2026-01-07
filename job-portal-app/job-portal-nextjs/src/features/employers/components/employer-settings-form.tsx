@@ -21,6 +21,7 @@ import {
   Globe,
   Loader,
   MapPin,
+  X,
 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -33,6 +34,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import Tiptap from "@/components/text-editor";
 import { UploadButton } from "@/lib/uploadthing";
+import Image from "next/image";
 
 // interface IFormInput {
 //   username: string;
@@ -74,6 +76,8 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<EmployerProfileData>({
     defaultValues: {
@@ -83,11 +87,18 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
       teamSize: initialData?.teamSize || undefined,
       yearOfEstablishment: initialData?.yearOfEstablishment,
       location: initialData?.location || "",
+      avatarUrl: initialData?.avatarUrl || "",
       websiteUrl: initialData?.websiteUrl || "",
     },
 
     resolver: zodResolver(employerProfileSchema),
   });
+
+  const avatarUrl = watch("avatarUrl");
+
+  const handleRemoveAvatar = () => {
+    setValue("avatarUrl", "");
+  };
 
   const onSubmit = async (data: EmployerProfileData) => {
     console.log(data);
@@ -114,7 +125,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
             <Input id="email" type="email" {...register("email")} />
           </div> */}
 
-          <div className="border border-dashed p-2">
+          {/* <div className="border border-dashed p-2">
             <UploadButton
               endpoint="imageUploader"
               onClientUploadComplete={(res) => {
@@ -128,6 +139,52 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
               }}
             />{" "}
             <span>Upload Image</span>
+          </div> */}
+
+          <div className="space-y-2">
+            <Label>Company Logo</Label>
+            {avatarUrl ? (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar"
+                  width={100}
+                  height={100}
+                  className="rounded-full"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size={"sm"}
+                  onClick={handleRemoveAvatar}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Remove
+                </Button>
+              </div>
+            ) : (
+              <div className="border border-dashed p-2 rounded-xl">
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    const profilePic = res[0];
+
+                    setValue("avatarUrl", profilePic.ufsUrl, {
+                      shouldDirty: true,
+                    });
+
+                    console.log("Files: ", res);
+
+                    toast.success("Upload completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    toast.error(`Upload failed: ${error.message}`);
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
