@@ -561,60 +561,60 @@ export const ImageUpload = ({
     setPreviewUrl(null);
   };
 
-  // if (value || previewUrl)
-  //   return (
-  //     <div
-  //       className={cn(
-  //         "overflow-hidden border-2 border-border relative group rounded-lg",
-  //         className
-  //       )}
-  //       {...props}
-  //     >
-  //       <Image
-  //         src={previewUrl || value || ""}
-  //         alt="Uploaded image"
-  //         height={200}
-  //         width={200}
-  //         className="w-full h-full object-cover"
-  //       />
+  if (value || previewUrl)
+    return (
+      <div
+        className={cn(
+          "overflow-hidden border-2 border-border relative group rounded-lg",
+          className
+        )}
+        {...props}
+      >
+        <Image
+          src={previewUrl || value || ""}
+          alt="Uploaded image"
+          height={200}
+          width={200}
+          className="w-full h-full object-cover"
+        />
 
-  //       {isUploading && (
-  //         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-  //           <div className="flex flex-col items-center gap-2">
-  //             <Loader2 className="w-8 h-8 text-white animate-spin" />
-  //             <p className="text-sm text-white font-medium">Uploading...</p>
-  //           </div>
-  //         </div>
-  //       )}
+        {isUploading && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+              <p className="text-sm text-white font-medium">Uploading...</p>
+            </div>
+          </div>
+        )}
 
-  //       {!isUploading && (
-  //         <div
-  //           {...getRootProps()}
-  //           className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
-  //         >
-  //           <input {...getInputProps()} />
-  //           <Button
-  //             type="button"
-  //             variant="secondary"
-  //             size="sm"
-  //             onClick={(e) => e.stopPropagation()}
-  //           >
-  //             <Upload className="w-4 h-4 mr-2" />
-  //             Change
-  //           </Button>
-  //           <Button
-  //             type="button"
-  //             variant="destructive"
-  //             size="sm"
-  //             onClick={handleRemove}
-  //           >
-  //             <X className="w-4 h-4 mr-2" />
-  //             Remove
-  //           </Button>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
+        {!isUploading && (
+          <div
+            {...getRootProps()}
+            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <input {...getInputProps()} />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Change
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={handleRemove}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Remove
+            </Button>
+          </div>
+        )}
+      </div>
+    );
 
   return (
     <div
