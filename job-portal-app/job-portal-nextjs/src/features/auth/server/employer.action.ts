@@ -56,6 +56,7 @@ export const updateEmployerProfileAction = async (
       organizationType,
       teamSize,
       avatarUrl,
+      bannerImageUrl,
     } = data;
 
     const updatedEmployer = await db
@@ -70,6 +71,7 @@ export const updateEmployerProfileAction = async (
           : null,
         organizationType,
         teamSize,
+        bannerImageUrl,
       })
       .where(eq(employers?.id, currentUser?.id));
     console.log(updatedEmployer);

@@ -26,6 +26,7 @@ const EmployerSettings = async () => {
           location: employer?.employerDetails?.location || "",
           websiteUrl: employer?.employerDetails?.websiteUrl || "",
           avatarUrl: employer?.avatarUrl || "",
+          bannerImageUrl: employer?.employerDetails?.bannerImageUrl || "",
         }}
       />
     </div>

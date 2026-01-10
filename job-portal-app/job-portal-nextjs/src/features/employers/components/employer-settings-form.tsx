@@ -94,6 +94,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
       location: initialData?.location || "",
       avatarUrl: initialData?.avatarUrl || "",
       websiteUrl: initialData?.websiteUrl || "",
+      bannerImageUrl: initialData?.bannerImageUrl || "",
     },
 
     resolver: zodResolver(employerProfileSchema),
@@ -192,7 +193,7 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
             )}
           </div> */}
 
-          <div>
+          <div className="grid lg:grid-cols-[1fr_4fr] gap-6">
             <Controller
               name="avatarUrl"
               control={control}
@@ -220,8 +221,38 @@ const EmployerSettingsForm = ({ initialData }: Props) => {
                 </div>
               )}
             />
-          </div>
 
+            <Controller
+              name="bannerImageUrl"
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <div className="space-y-2">
+                    <Label>Upload Banner Image</Label>
+
+                    <ImageUpload
+                      value={field?.value}
+                      onChange={field?.onChange}
+                      boxText={
+                        "Banner images optimal dimension 1520*400. Supported format: .png, .jpg, .jpeg. Max photo size is 4MB."
+                      }
+                      className={cn(
+                        fieldState?.error &&
+                          "ring-1 ring-destructive/50 rounded-lg",
+                        "h-64 w-64"
+                      )}
+                    />
+
+                    {fieldState.error && (
+                      <p className="text-destructive text-sm">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                );
+              }}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name *</Label>
             <div className="relative">
