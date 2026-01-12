@@ -2,8 +2,8 @@ import {
   JOB_LEVEL,
   JOB_TYPE,
   MINIMUM_EDUCATION,
-  SAlARY_CURRENCY,
-  SAlARY_PERIOD,
+  SALARY_CURRENCY,
+  SALARY_PERIOD,
   WORK_TYPE,
 } from "@/config/constant";
 import { relations } from "drizzle-orm";
@@ -100,8 +100,8 @@ export const jobs = mysqlTable("jobs", {
   tags: text("tags"),
   minSalary: int("min_salary"),
   maxSalary: int("max_salary"),
-  salaryCurrency: mysqlEnum("salary_currency", SAlARY_CURRENCY),
-  salaryPeriod: mysqlEnum("salary_period", SAlARY_PERIOD),
+  salaryCurrency: mysqlEnum("salary_currency", SALARY_CURRENCY),
+  salaryPeriod: mysqlEnum("salary_period", SALARY_PERIOD),
   location: varchar("location", { length: 255 }),
   jobType: mysqlEnum("job_type", JOB_TYPE),
   workType: mysqlEnum("work_type", WORK_TYPE),

@@ -1,7 +1,7 @@
 export const SESSION_LIFETIME = 30 * 24 * 60 * 60;
 export const SESSION_REFRESH_TIME = SESSION_LIFETIME / 2;
 
-export const SAlARY_CURRENCY = [
+export const SALARY_CURRENCY = [
   "USD",
   "EUR",
   "GBP",
@@ -14,7 +14,7 @@ export const SAlARY_CURRENCY = [
   "BDT",
 ] as const;
 
-export const SAlARY_PERIOD = [
+export const SALARY_PERIOD = [
   "hourly",
   "daily",
   "weekly",
