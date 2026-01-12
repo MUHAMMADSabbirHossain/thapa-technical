@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/config/db";
-import { getCurrentUser } from "./auth.queries";
+import { getCurrentUser } from "../auth/server/auth.queries";
 import { employers, users } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { EmployerProfileData } from "@/features/employers/employers.schema";

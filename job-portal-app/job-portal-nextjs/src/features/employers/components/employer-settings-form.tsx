@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { updateEmployerProfileAction } from "@/features/auth/server/employer.action";
+import { updateEmployerProfileAction } from "@/features/server/employer.action";
 import {
   Briefcase,
   Building2,

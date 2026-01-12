@@ -4,6 +4,7 @@ import {
   MINIMUM_EDUCATION,
   SALARY_CURRENCY,
   SALARY_PERIOD,
+  WORK_TYPE,
 } from "@/config/constant";
 import z from "zod";
 
@@ -31,14 +32,16 @@ export const jobSchema = z
       .regex(/^\d+$/, "Minimum salary must be a valid number")
       .optional()
       .or(z.literal(""))
-      .transform((v) => (!v ? null : parseInt(v))),
+      .transform((v) => (!v ? null : parseInt(v)))
+      .nullable(),
     maxSalary: z
       .string()
       .trim()
       .regex(/^\d+$/, "Maximum salary must be a valid number")
       .optional()
       .or(z.literal(""))
-      .transform((v) => (!v ? null : parseInt(v))),
+      .transform((v) => (!v ? null : parseInt(v)))
+      .nullable(),
     salaryCurrency: z.enum(SALARY_CURRENCY, {
       error: "Please select a valid currency",
     }),
@@ -58,6 +61,9 @@ export const jobSchema = z
     jobLevel: z.enum(JOB_LEVEL, {
       error: "Please select a valid job level",
     }),
+    workType: z.enum(WORK_TYPE, {
+      error: "Please select a valid work type",
+    }),
     experience: z
       .string()
       .trim()
@@ -73,21 +79,32 @@ export const jobSchema = z
     expiresAt: z
       .string()
       .trim()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "Please enter a valid date (YYYY-MM-DD)")
-      .refine(
-        (date) => {
-          const expiryDate = new Date(date); // YYYY-MM-DD 00:00:00:00
-          const today = new Date();
-          today.setHours(0, 0, 0, 0); // Set time to YYYY-MM-DD 00:00:00:00
-          return expiryDate >= today;
-        },
-        {
-          message: "Expiry date must be today or in the future",
-        }
-      )
       .optional()
       .or(z.literal(""))
-      .transform((date) => (date ? new Date(date) : null)),
+      .transform((date) => (!date || date === "" ? null : date))
+      .pipe(
+        z
+          .string()
+          .regex(
+            /^\d{4}-\d{2}-\d{2}$/,
+            "Please enter a valid date (YYYY-MM-DD)"
+          )
+          .refine(
+            (date) => {
+              const expiryDate = new Date(date); // YYYY-MM-DD 00:00:00:00
+              const today = new Date();
+              today.setHours(0, 0, 0, 0); // Set time to YYYY-MM-DD 00:00:00:00
+
+              return expiryDate >= today;
+            },
+            {
+              message: "Expiry date must be today or in the future",
+            }
+          )
+          .transform((date) => new Date(date))
+          .nullable()
+      )
+      .nullable(),
   })
   .refine(
     (data) => {

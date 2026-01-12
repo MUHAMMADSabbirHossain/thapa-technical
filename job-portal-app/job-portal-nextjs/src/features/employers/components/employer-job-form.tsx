@@ -35,6 +35,8 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { JobFormData, jobSchema } from "../jobs/jobs.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { createJobAction } from "@/features/server/jobs.actions";
 
 export type JobType = (typeof JOB_TYPE)[number];
 export type WorkType = (typeof WORK_TYPE)[number];
@@ -85,6 +87,11 @@ const JobForm = () => {
 
   const handleFormSubmit = async (data: JobFormData) => {
     console.log(data);
+
+    const response = await createJobAction(data);
+
+    if (response?.status === "success") toast.success(response?.message);
+    else toast.error(response?.message);
   };
 
   return (
