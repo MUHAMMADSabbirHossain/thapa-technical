@@ -4,6 +4,8 @@ import db from "@/config/db";
 import { getCurrentUser } from "../auth/server/auth.queries";
 import { JobFormData, jobSchema } from "../employers/jobs/jobs.schema";
 import { jobs } from "@/drizzle/schema";
+import { Job } from "../employers/jobs/types/job.types";
+import { eq } from "drizzle-orm";
 
 export const createJobAction = async (data: JobFormData) => {
   try {
@@ -29,5 +31,36 @@ export const createJobAction = async (data: JobFormData) => {
     console.error(error);
 
     return { status: "error", message: "Something went wrong" };
+  }
+};
+
+export const getEmployerJobsAction = async (): Promise<{
+  status: "success" | "error";
+  data?: Job[];
+  message?: string;
+}> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser || currentUser?.role !== "employer") {
+      return { status: "error", message: "Unauthorized", data: [] };
+    }
+
+    const result = await db
+      .select()
+      .from(jobs)
+      .where(eq(jobs?.employerId, currentUser?.id));
+
+    return {
+      status: "success",
+      data: result as Job[],
+      message: "Jobs fetched successfully",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: "Something went wrong",
+      data: [],
+    };
   }
 };
