@@ -9,10 +9,13 @@ import {
   getEmployerJobsAction,
 } from "@/features/server/jobs.actions";
 import EmployerJobCard from "./employer-job-card";
+import { useRouter } from "next/navigation";
 
 const EmployerJobList = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchJobs() {
@@ -50,6 +53,10 @@ const EmployerJobList = () => {
     }
   };
 
+  const handleEdit = async (jobId: number) => {
+    router.push(`/employer-dashboard/jobslist/${jobId}/edit`);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[400px">
@@ -69,7 +76,12 @@ const EmployerJobList = () => {
   return (
     <section>
       {jobs?.map((job) => (
-        <EmployerJobCard key={job?.id} job={job} onDelete={handleDelete} />
+        <EmployerJobCard
+          key={job?.id}
+          job={job}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
       ))}
     </section>
   );
