@@ -5,7 +5,7 @@ import { getCurrentUser } from "../auth/server/auth.queries";
 import { JobFormData, jobSchema } from "../employers/jobs/jobs.schema";
 import { jobs } from "@/drizzle/schema";
 import { Job } from "../employers/jobs/types/job.types";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const createJobAction = async (data: JobFormData) => {
   try {
@@ -62,5 +62,35 @@ export const getEmployerJobsAction = async (): Promise<{
       message: "Something went wrong",
       data: [],
     };
+  }
+};
+
+export const deleteJobAction = async (
+  jobId: number
+): Promise<{
+  status: "success" | "error";
+  message?: string;
+  data?: number;
+}> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser || currentUser?.role !== "employer") {
+      return { status: "error", message: "Unauthorized" };
+    }
+
+    await db
+      .delete(jobs)
+      .where(and(eq(jobs?.employerId, currentUser?.id), eq(jobs?.id, jobId)));
+
+    return {
+      status: "success",
+      message: "Job deleted successfully",
+      data: jobId,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return { status: "error", message: "Something went wrong", data: jobId };
   }
 };

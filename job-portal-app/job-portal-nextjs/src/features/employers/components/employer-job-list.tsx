@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Job } from "../jobs/types/job.types";
 import { Loader2 } from "lucide-react";
-import { getEmployerJobsAction } from "@/features/server/jobs.actions";
+import {
+  deleteJobAction,
+  getEmployerJobsAction,
+} from "@/features/server/jobs.actions";
 import EmployerJobCard from "./employer-job-card";
 
 const EmployerJobList = () => {
@@ -33,6 +36,20 @@ const EmployerJobList = () => {
     fetchJobs();
   }, []);
 
+  const handleDelete = async (jobId: number) => {
+    try {
+      const res = await deleteJobAction(jobId);
+
+      if (res?.status === "success") {
+        setJobs((prevJobs) => prevJobs.filter((job) => job?.id !== jobId));
+
+        toast.success(res?.message || "Job deleted successfully");
+      }
+    } catch (error) {
+      toast.error(error?.message || "Failed to delete job");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[400px">
@@ -52,7 +69,7 @@ const EmployerJobList = () => {
   return (
     <section>
       {jobs?.map((job) => (
-        <EmployerJobCard key={job?.id} job={job} />
+        <EmployerJobCard key={job?.id} job={job} onDelete={handleDelete} />
       ))}
     </section>
   );
