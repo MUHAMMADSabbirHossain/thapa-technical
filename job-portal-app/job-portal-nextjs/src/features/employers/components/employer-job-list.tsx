@@ -54,7 +54,7 @@ const EmployerJobList = () => {
   };
 
   const handleEdit = async (jobId: number) => {
-    router.push(`/employer-dashboard/jobslist/${jobId}/edit`);
+    router.push(`/employer-dashboard/jobs/${jobId}/edit`);
   };
 
   if (isLoading) {

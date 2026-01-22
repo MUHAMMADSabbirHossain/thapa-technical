@@ -22,8 +22,8 @@ const base = "/employer-dashboard";
 const navigationItems = [
   { name: "Overview", icon: LayoutDashboard, href: base + "/" },
   { name: "Employers Profile", icon: User },
-  { name: "Post a Job", icon: Plus, href: base + "/jobs" },
-  { name: "My Jobs", icon: Briefcase, href: base + "/jobslist" },
+  { name: "Post a Job", icon: Plus, href: base + "/jobs/create" },
+  { name: "My Jobs", icon: Briefcase, href: base + "/jobs" },
   { name: "Saved Candidate", icon: Bookmark },
   { name: "Plans & Billing", icon: CreditCard },
   { name: "All Companies", icon: Building },
@@ -80,7 +80,7 @@ const EmployerSidebar = () => {
                   href: curNav?.href || "",
                   pathname,
                   base: "/employer-dashboard",
-                }) && "text-primary bg-blue-300"
+                }) && "text-primary bg-blue-300",
               )}
             >
               <Icon />
