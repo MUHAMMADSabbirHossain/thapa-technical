@@ -1,3 +1,5 @@
+import JobForm from "@/features/employers/components/employer-job-form";
+import { getJobByIdAction } from "@/features/server/jobs.actions";
 import { redirect } from "next/navigation";
 
 interface EditJobPageProps {
@@ -11,11 +13,20 @@ const EditJobPage = async ({ params }: EditJobPageProps) => {
 
   if (Number.isNaN(jobId)) redirect("/employer-dashboard/jobs");
 
+  // fetch job by id
+  const { status, data: job } = await getJobByIdAction(Number(jobId));
+
+  if (status === "error" || !job) {
+    redirect("/employer-dashboard/jobs");
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <h1>Edit Job</h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold">Edit Job: {job?.title}</h1>
+      </div>
 
-      <p>Editing job with ID: {jobId}</p>
+      <JobForm initialData={job} isEditMode={true} />
     </div>
   );
 };

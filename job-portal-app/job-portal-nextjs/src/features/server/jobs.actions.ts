@@ -66,7 +66,7 @@ export const getEmployerJobsAction = async (): Promise<{
 };
 
 export const deleteJobAction = async (
-  jobId: number
+  jobId: number,
 ): Promise<{
   status: "success" | "error";
   message?: string;
@@ -92,5 +92,33 @@ export const deleteJobAction = async (
     console.error(error);
 
     return { status: "error", message: "Something went wrong", data: jobId };
+  }
+};
+
+export const getJobByIdAction = async (jobId: number) => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser || currentUser?.role !== "employer") {
+      return { status: "error", message: "Unauthorized", data: null };
+    }
+
+    const [job] = await db
+      .select()
+      .from(jobs)
+      .where(and(eq(jobs?.id, jobId), eq(jobs?.employerId, currentUser?.id)))
+      .limit(1);
+
+    if (!job) {
+      return { status: "error", message: "Job not found", data: null };
+    }
+
+    return {
+      status: "success",
+      message: "Job fetched successfully",
+      data: job,
+    };
+  } catch (error) {
+    return { status: "error", message: "Failed to fetch job", data: null };
   }
 };
