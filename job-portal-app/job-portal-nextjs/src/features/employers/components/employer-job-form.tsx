@@ -36,7 +36,10 @@ import { Controller, useForm } from "react-hook-form";
 import { JobFormData, jobSchema } from "../jobs/jobs.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { createJobAction } from "@/features/server/jobs.actions";
+import {
+  createJobAction,
+  updateJobAction,
+} from "@/features/server/jobs.actions";
 
 export type JobType = (typeof JOB_TYPE)[number];
 export type WorkType = (typeof WORK_TYPE)[number];
@@ -60,7 +63,7 @@ export type MinEducation = (typeof MINIMUM_EDUCATION)[number];
   experience?: string;
   minEducation?: MinEducation;
   isFeatured: boolean;
-  expiresAt?: string; // YYYY-MM-DD (HTML date input)
+  expiredAt?: string; // YYYY-MM-DD (HTML date input)
 } */
 
 interface JobPostFormProps {
@@ -85,15 +88,17 @@ const JobForm = ({ initialData, isEditMode = false }: JobPostFormProps) => {
     //   experience: "",
     //   minEducation: "none",
     //   isFeatured: false,
-    //   expiresAt: "",
+    //   expiredAt: "",
     // },
     resolver: zodResolver(jobSchema),
     defaultValues: initialData
       ? {
           ...initialData,
+          minSalary: initialData?.minSalary?.toString(),
+          maxSalary: initialData?.maxSalary?.toString(),
           // FIX: Handle Date Format
-          expiresAt: initialData?.expiresAt
-            ? new Date(initialData?.expiresAt).toISOString().split("T")[0]
+          expiredAt: initialData?.expiredAt
+            ? new Date(initialData?.expiredAt).toISOString().split("T")[0]
             : "",
         }
       : {
@@ -111,17 +116,32 @@ const JobForm = ({ initialData, isEditMode = false }: JobPostFormProps) => {
           experience: "",
           minEducation: "none",
           isFeatured: false,
-          expiresAt: "",
+          expiredAt: "",
         },
   });
+  // console.log(initialData);
 
   const handleFormSubmit = async (data: JobFormData) => {
     console.log(data);
 
-    const response = await createJobAction(data);
+    try {
+      let response;
 
-    if (response?.status === "success") toast.success(response?.message);
-    else toast.error(response?.message);
+      if (isEditMode && initialData) {
+        // --- UPDATE JOB ---
+        response = await updateJobAction(initialData?.id, data);
+      } else {
+        // --- CREATE JOB ---
+        response = await createJobAction(data);
+      }
+
+      if (response?.status === "success") toast.success(response?.message);
+      else toast.error(response?.message);
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -461,23 +481,23 @@ const JobForm = ({ initialData, isEditMode = false }: JobPostFormProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expiresAt">Expiry Date (Optional)</Label>
+              <Label htmlFor="expiredAt">Expiry Date (Optional)</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  id="expiresAt"
+                  id="expiredAt"
                   type="date"
                   className={cn(
                     "pl-10",
-                    errors.expiresAt && "border-destructive",
+                    errors.expiredAt && "border-destructive",
                   )}
-                  {...register("expiresAt")}
-                  aria-invalid={!!errors.expiresAt}
+                  {...register("expiredAt")}
+                  aria-invalid={!!errors.expiredAt}
                 />
               </div>
-              {errors.expiresAt && (
+              {errors.expiredAt && (
                 <p className="text-sm text-destructive">
-                  {errors.expiresAt.message}
+                  {errors.expiredAt.message}
                 </p>
               )}
             </div>
@@ -536,7 +556,13 @@ const JobForm = ({ initialData, isEditMode = false }: JobPostFormProps) => {
               className="w-full md:w-auto"
             >
               {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
-              {isSubmitting ? "Saving..." : "Post Job"}
+              {isEditMode
+                ? isSubmitting
+                  ? "Updating..."
+                  : "Update Job"
+                : isSubmitting
+                  ? "Creating..."
+                  : "Post Job"}
             </Button>
             {!isDirty && (
               <p className="text-sm text-muted-foreground">

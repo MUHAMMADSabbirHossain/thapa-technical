@@ -76,7 +76,7 @@ export const jobSchema = z
       })
       .optional()
       .or(z.literal("")),
-    expiresAt: z
+    expiredAt: z
       .string()
       .trim()
       .optional()
@@ -87,7 +87,7 @@ export const jobSchema = z
           .string()
           .regex(
             /^\d{4}-\d{2}-\d{2}$/,
-            "Please enter a valid date (YYYY-MM-DD)"
+            "Please enter a valid date (YYYY-MM-DD)",
           )
           .refine(
             (date) => {
@@ -99,10 +99,10 @@ export const jobSchema = z
             },
             {
               message: "Expiry date must be today or in the future",
-            }
+            },
           )
           .transform((date) => new Date(date))
-          .nullable()
+          .nullable(),
       )
       .nullable(),
   })
@@ -117,7 +117,7 @@ export const jobSchema = z
     {
       message: "Maximum salary must be greater than or equal to minimum salary",
       path: ["maxSalary"], // path is an array because Zod supports deep/nested path
-    }
+    },
   )
   .refine(
     (data) => {
@@ -136,7 +136,7 @@ export const jobSchema = z
     {
       message: "Currency and period are required when salary is specified",
       path: ["salaryCurrency"],
-    }
+    },
   );
 
 export type JobFormData = z.infer<typeof jobSchema>;

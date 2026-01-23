@@ -24,7 +24,7 @@ export interface Job {
   minEducation: MinEducation | null;
   experience: string | null;
 
-  expiresAt: Date | null;
+  expiredAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   //   deletedAt: Date | null;

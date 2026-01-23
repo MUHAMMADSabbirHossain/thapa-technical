@@ -122,3 +122,31 @@ export const getJobByIdAction = async (jobId: number) => {
     return { status: "error", message: "Failed to fetch job", data: null };
   }
 };
+
+export const updateJobAction = async (jobId: number, values: any) => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser || currentUser?.role !== "employer") {
+      return { status: "error", message: "Unauthorized" };
+    }
+
+    await db
+      .update(jobs)
+      .set({
+        ...values,
+        // updatedAt: new Date(), // Always update the timestamp
+      })
+      .where(and(eq(jobs?.id, jobId), eq(jobs?.employerId, currentUser?.id)));
+
+    return {
+      status: "success",
+      message: "Job updated successfully",
+      data: jobId,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return { status: "error", message: "Something went wrong", data: jobId };
+  }
+};
