@@ -1,67 +1,15 @@
 "use client";
 
+import { applicantNavItems } from "@/config/constant";
 import { logoutUserAction } from "@/features/auth/server/auth.actions";
+import { isActiveLink } from "@/lib/navigation.utils";
 import { cn } from "@/lib/utils";
-import {
-  Bookmark,
-  Briefcase,
-  LayoutDashboard,
-  LogOut,
-  Search,
-  Settings,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { URLPattern } from "next/server";
-
-const base = "/dashboard";
-
-const naviagtionItems = [
-  {
-    name: "Home",
-    icon: LayoutDashboard,
-    href: base + "/",
-  },
-  {
-    name: "Find Jobs",
-    icon: Search,
-    href: base + "/find-jobs",
-  },
-  {
-    name: "Applied",
-    icon: Briefcase,
-    href: base + "/applications",
-  },
-  { name: "Save Jobs", icon: Bookmark, href: base + "/saved-jobs" },
-  { name: "Settings", icon: Settings, href: base + "/settings" },
-];
 
 const ApplicantSidebar = () => {
   const pathname = usePathname();
-  //   console.log("pathname: ", pathname);
-
-  // to check the link of the matching sidebar
-  function isLinkActive({
-    href,
-    pathname,
-    base = "/",
-  }: {
-    href: string;
-    pathname: string;
-    base?: string;
-  }) {
-    const normalizedHref = href.replace(/\/$/, "") || "/";
-
-    // URLPattern is a built-in browser API that lets you define URL matching patterns using a template-like syntax.
-
-    const pattern = new URLPattern({
-      pathname: normalizedHref === base ? base : `${normalizedHref}{/*}?`,
-    });
-    // console.log("pattern: ", pattern);
-    // console.log("inside: ", pattern.test({ pathname }));
-
-    return pattern.test({ pathname });
-  }
 
   return (
     <div className="w-64 bg-card border-r border-border fixed bottom-0 top-0">
@@ -71,24 +19,24 @@ const ApplicantSidebar = () => {
         </h2>
       </div>
 
-      <nav className="">
-        {naviagtionItems.map((curNav) => {
-          const Icon = curNav?.icon;
+      <nav className="px-3 space-y-1">
+        {applicantNavItems.map((item) => {
+          const Icon = item?.icon;
+          const active = isActiveLink(pathname, item?.href, item?.exact);
+
           return (
             <Link
-              key={curNav?.name}
-              href={curNav?.href || "#"}
+              key={item?.name}
+              href={item?.href || "#"}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-                isLinkActive({
-                  href: curNav?.href || "",
-                  pathname,
-                  base: "/dashboard",
-                }) && "text-primary bg-blue-300",
+                active
+                  ? "text-primary bg-primary/10" // Note: bg-blue-300 might be too dard, added opacity or stick to your class
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent",
               )}
             >
               <Icon />
-              {curNav?.name}
+              {item?.name}
             </Link>
           );
         })}
