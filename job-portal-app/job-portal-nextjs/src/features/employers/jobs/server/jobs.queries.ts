@@ -35,3 +35,8 @@ export const getAllJobs = async () => {
 
   return jobsData;
 };
+
+// AUTOMATIC TYPE EXPORT
+// This creates a type based on EXACTLY what getAllJobs returns.
+// If you change the query, the type will automatically update.
+export type JobCardType = Awaited<ReturnType<typeof getAllJobs>>[number];
