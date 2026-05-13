@@ -12,7 +12,7 @@ import {
 import { JOB_LEVEL, JOB_TYPE, WORK_TYPE } from "@/config/constant";
 import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function JobFilters() {
   const router = useRouter();
@@ -32,17 +32,30 @@ function JobFilters() {
   );
   const [workType, setWorkType] = useState(searchParams.get("workType") || "");
 
-  function updateFilters({
-    jobType,
-    jobLevel,
-    workType,
-    search,
-  }: {
-    jobType?: string;
-    jobLevel?: string;
-    workType?: string;
-    search?: string;
-  }) {}
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      updateFilters({ search: search });
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search]);
+
+  function updateFilters(newParams: Record<string, string | null>) {
+    const params = new URLSearchParams(searchParams.toString());
+    console.log("newParams: ", newParams);
+
+    Object.entries(newParams).forEach(([key, value]) => {
+      const actualValue = value?.trim();
+
+      if (!actualValue || actualValue === "all") {
+        params.delete(key);
+      } else {
+        params.set(key, actualValue);
+      }
+    });
+
+    router.push(`?${params.toString()}`, { scroll: false });
+  }
 
   function clearFilters() {
     setJobLevel("");
