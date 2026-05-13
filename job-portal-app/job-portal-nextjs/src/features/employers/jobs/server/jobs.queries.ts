@@ -2,7 +2,15 @@ import db from "@/config/db";
 import { employers, jobs, users } from "@/drizzle/schema";
 import { and, desc, eq, gte, isNull, or } from "drizzle-orm";
 
-export const getAllJobs = async () => {
+// 2. Define the Interface
+export interface JobfilterParams {
+  search?: string;
+  jobType?: string;
+  jobLevel?: string;
+  workType?: string;
+}
+
+export const getAllJobs = async (filters: JobfilterParams) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Reset time to 00:00:00.000
 

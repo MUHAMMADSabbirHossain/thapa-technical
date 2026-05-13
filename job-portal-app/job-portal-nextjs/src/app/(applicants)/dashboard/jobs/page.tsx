@@ -1,10 +1,40 @@
 import JobFilters from "@/features/applicants/jobs/components/job-filters";
 import JobCard from "@/features/employers/jobs/components/jobCard";
-import { getAllJobs } from "@/features/employers/jobs/server/jobs.queries";
+import {
+  getAllJobs,
+  JobfilterParams,
+} from "@/features/employers/jobs/server/jobs.queries";
 
-const JobsPage = async () => {
-  const jobs = await getAllJobs();
-  console.log(jobs);
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const JobsPage = async ({ searchParams }: PageProps) => {
+  const resolvedParams = await searchParams;
+  console.log("resovedParams: ", resolvedParams);
+
+  const filters: JobfilterParams = {
+    search:
+      typeof resolvedParams.search === "string"
+        ? resolvedParams.search
+        : undefined,
+    jobType:
+      typeof resolvedParams.jobType === "string"
+        ? resolvedParams.jobType
+        : undefined,
+    jobLevel:
+      typeof resolvedParams.jobLevel === "string"
+        ? resolvedParams.jobLevel
+        : undefined,
+    workType:
+      typeof resolvedParams.workType === "string"
+        ? resolvedParams.workType
+        : undefined,
+  };
+
+  // 1. Fetch data directly on server
+  const jobs = await getAllJobs(filters);
+  // console.log(jobs);
 
   return (
     <div className="space-y-6 p-6">
