@@ -1,6 +1,6 @@
 import db from "@/config/db";
 import { employers, jobs, users } from "@/drizzle/schema";
-import { and, desc, eq, gte, isNull, or } from "drizzle-orm";
+import { and, desc, eq, gte, isNull, like, or, SQL } from "drizzle-orm";
 
 // 2. Define the Interface
 export interface JobfilterParams {
@@ -13,6 +13,31 @@ export interface JobfilterParams {
 export const getAllJobs = async (filters: JobfilterParams) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Reset time to 00:00:00.000
+
+  // Base Rule
+  const conditions: (SQL | undefined)[] = [
+    // isNull(jobs.deletedAt),s
+    or(isNull(jobs.expiredAt), gte(jobs.expiredAt, today)),
+  ];
+
+  // search
+  if (filters?.search) {
+    // 1. react - mern stack react title, react, react thapa
+    // % - wildcard
+    // 2. company name, tags, title - LIKE() -contains
+    // 3. OR
+
+    const searchTerm = `%${filters.search}%`;
+
+    conditions.push(
+      or(
+        like(jobs.title, searchTerm),
+        like(employers.name, searchTerm),
+        like(jobs.tags, searchTerm),
+        like(jobs.location, searchTerm),
+      ),
+    );
+  }
 
   const jobsData = await db
     .select({
@@ -33,12 +58,7 @@ export const getAllJobs = async (filters: JobfilterParams) => {
     .from(jobs)
     .innerJoin(employers, eq(jobs.employerId, employers.id))
     .innerJoin(users, eq(employers.id, users.id)) // Join users to get avatarUrl
-    .where(
-      and(
-        // isNull(jobs.deletedAt),s
-        or(isNull(jobs.expiredAt), gte(jobs.expiredAt, today)),
-      ),
-    )
+    .where(and(...conditions))
     .orderBy(desc(jobs.createdAt));
 
   return jobsData;
