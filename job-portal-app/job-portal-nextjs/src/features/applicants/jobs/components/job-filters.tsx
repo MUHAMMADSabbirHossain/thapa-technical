@@ -60,10 +60,10 @@ function JobFilters() {
   function clearFilters() {
     setJobLevel("");
     setJobType("");
-    setSearch("");
     setWorkType("");
+    setSearch("");
 
-    const pathName = "/jobs";
+    const pathName = "/dashboard/jobs";
     router.push(pathName);
   }
 
