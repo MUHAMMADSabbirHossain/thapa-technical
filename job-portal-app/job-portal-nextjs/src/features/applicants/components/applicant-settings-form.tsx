@@ -33,6 +33,14 @@ import {
 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import {
+  applicantSettingsSchema,
+  ApplicantSettingsSchema,
+  EDUCATION_OPTIONS,
+  GENDER_OPTIONS,
+  MERITAL_STATUS_OPTIONS,
+} from "../applicant.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -57,10 +65,16 @@ function ApplicantSettingsForm() {
     watch,
     control,
     formState: { errors, isDirty, isSubmitting },
-  } = useForm<ApplicantProfileData>();
+  } = useForm<ApplicantSettingsSchema>({
+    resolver: zodResolver(applicantSettingsSchema),
+    defaultValues: {
+      email: "vinod@thapa.com",
+    },
+  });
 
-  async function onSubmit(data: ApplicantProfileData) {
+  async function onSubmit(data: ApplicantSettingsSchema) {
     console.log("Saving Data: ", data);
+    console.log("Resume file: ", data?.resume?.[0]);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -101,15 +115,20 @@ function ApplicantSettingsForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="name">Full Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    {...register("fullName")}
+                    {...register("name")}
                     placeholder="John Doe"
-                    className="pl-10"
+                    className={`pl-10 ${errors.name ? "border-destructive" : ""}`}
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-destructive text-sm">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -119,21 +138,31 @@ function ApplicantSettingsForm() {
                   <Input
                     {...register("email")}
                     placeholder="john@example.com"
-                    className="pl-10"
+                    className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-destructive text-sm">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phoneNumber">Phone</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    {...register("phone")}
+                    {...register("phoneNumber")}
                     placeholder="+1 (123) 456-7890"
-                    className="pl-10"
+                    className={`pl-10 ${errors.phoneNumber ? "border-destructive" : ""}`}
                   />
                 </div>
+                {errors.phoneNumber && (
+                  <p className="text-destructive text-sm">
+                    {errors.phoneNumber.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -143,9 +172,14 @@ function ApplicantSettingsForm() {
                   <Input
                     {...register("location")}
                     placeholder="New York, USA"
-                    className="pl-10"
+                    className={`pl-10 ${errors.location ? "border-destructive" : ""}`}
                   />
                 </div>
+                {errors.location && (
+                  <p className="text-destructive text-sm">
+                    {errors.location.message}
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -167,10 +201,15 @@ function ApplicantSettingsForm() {
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     {...register("dateOfBirth")}
-                    className="pl-10"
+                    className={`pl-10 ${errors.dateOfBirth ? "border-destructive" : ""}`}
                     type="date"
                   />
                 </div>
+                {errors.dateOfBirth && (
+                  <p className="text-destructive text-sm">
+                    {errors.dateOfBirth.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -179,11 +218,16 @@ function ApplicantSettingsForm() {
                   <Flag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     {...register("nationality")}
-                    className="pl-10"
+                    className={`pl-10 ${errors.nationality ? "border-destructive" : ""}`}
                     type="text"
                     placeholder="e.g., Nepali"
                   />
                 </div>
+                {errors.nationality && (
+                  <p className="text-destructive text-sm">
+                    {errors.nationality.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -196,17 +240,58 @@ function ApplicantSettingsForm() {
                       onValueChange={field?.onChange}
                       value={field?.value}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={`${errors.gender ? "border-destructive" : ""}`}
+                      >
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        {GENDER_OPTIONS.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   )}
                 />
+                {errors.gender && (
+                  <p className="text-destructive text-sm">
+                    {errors.gender.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="meritalStatus">Merital Status</Label>
+                <Controller
+                  name="meritalStatus"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field?.onChange}
+                      value={field?.value}
+                    >
+                      <SelectTrigger
+                        className={`${errors.meritalStatus ? "border-destructive" : ""}`}
+                      >
+                        <SelectValue placeholder="Select Merital Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MERITAL_STATUS_OPTIONS.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.meritalStatus && (
+                  <p className="text-destructive text-sm">
+                    {errors.meritalStatus.message}
+                  </p>
+                )}
               </div>
             </CardContent>
           </CardHeader>
@@ -229,19 +314,26 @@ function ApplicantSettingsForm() {
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field?.onChange} value={field?.value}>
-                    <SelectTrigger>
+                    <SelectTrigger
+                      className={`${errors.education ? "border-destructive" : ""}`}
+                    >
                       <SelectValue placeholder="Select Education" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">None</SelectItem>
-                      <SelectItem value="high_school">High School</SelectItem>
-                      <SelectItem value="bachelor">Bachelor</SelectItem>
-                      <SelectItem value="master">Master</SelectItem>
-                      <SelectItem value="phd">PhD</SelectItem>
+                      {EDUCATION_OPTIONS.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
               />
+              {errors.education && (
+                <p className="text-destructive text-sm">
+                  {errors.education.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -251,9 +343,14 @@ function ApplicantSettingsForm() {
                 <Input
                   {...register("experience")}
                   placeholder="e.g., 2 years"
-                  className="pl-10"
+                  className={`pl-10 ${errors.experience ? "border-destructive" : ""}`}
                 />
               </div>
+              {errors.experience && (
+                <p className="text-destructive text-sm">
+                  {errors.experience.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -263,18 +360,28 @@ function ApplicantSettingsForm() {
                 <Input
                   {...register("websiteUrl")}
                   placeholder="e.g., https://example.com"
-                  className="pl-10"
+                  className={`pl-10 ${errors.websiteUrl ? "border-destructive" : ""}`}
                 />
               </div>
+              {errors.websiteUrl && (
+                <p className="text-destructive text-sm">
+                  {errors.websiteUrl.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="biography">Biography</Label>
               <Textarea
                 {...register("biography")}
-                className="min-h-[120px]"
+                className={`min-h-[120px] ${errors.biography ? "border-destructive" : ""}`}
                 placeholder="Tell us about yourself..."
               />
+              {errors.biography && (
+                <p className="text-destructive text-sm">
+                  {errors.biography.message}
+                </p>
+              )}
               <p className="text-[10px] text-right text-muted-foreground">
                 Max 500 characters
               </p>
