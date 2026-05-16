@@ -306,51 +306,56 @@ function ApplicantSettingsForm() {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="education">Highest Education</Label>
-              <Controller
-                name="education"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field?.onChange} value={field?.value}>
-                    <SelectTrigger
-                      className={`${errors.education ? "border-destructive" : ""}`}
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="education">Highest Education</Label>
+                <Controller
+                  name="education"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field?.onChange}
+                      value={field?.value}
                     >
-                      <SelectValue placeholder="Select Education" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {EDUCATION_OPTIONS.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.education && (
-                <p className="text-destructive text-sm">
-                  {errors.education.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="experience">Experience</Label>
-              <div className="relative">
-                <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  {...register("experience")}
-                  placeholder="e.g., 2 years"
-                  className={`pl-10 ${errors.experience ? "border-destructive" : ""}`}
+                      <SelectTrigger
+                        className={`${errors.education ? "border-destructive" : ""}`}
+                      >
+                        <SelectValue placeholder="Select Education" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EDUCATION_OPTIONS.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
+                {errors.education && (
+                  <p className="text-destructive text-sm">
+                    {errors.education.message}
+                  </p>
+                )}
               </div>
-              {errors.experience && (
-                <p className="text-destructive text-sm">
-                  {errors.experience.message}
-                </p>
-              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="experience">Experience</Label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    {...register("experience")}
+                    placeholder="e.g., 2 years"
+                    className={`pl-10 ${errors.experience ? "border-destructive" : ""}`}
+                  />
+                </div>
+                {errors.experience && (
+                  <p className="text-destructive text-sm">
+                    {errors.experience.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
