@@ -41,6 +41,7 @@ import {
   MERITAL_STATUS_OPTIONS,
 } from "../applicant.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Tiptap from "@/components/text-editor";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -375,7 +376,7 @@ function ApplicantSettingsForm() {
               )}
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="biography">Biography</Label>
               <Textarea
                 {...register("biography")}
@@ -390,6 +391,31 @@ function ApplicantSettingsForm() {
               <p className="text-[10px] text-right text-muted-foreground">
                 Max 500 characters
               </p>
+            </div> */}
+
+            <div className="space-y-2">
+              <Controller
+                name="biography"
+                control={control}
+                render={({
+                  field,
+                  fieldState,
+                }: {
+                  field: any;
+                  fieldState: any;
+                }) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="biography">Biography</Label>
+                    <Tiptap content={field?.value} onChange={field.onChange} />
+
+                    {fieldState?.error && (
+                      <p className="text-destructive text-sm">
+                        {fieldState?.error?.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
 
             <Separator />
