@@ -42,6 +42,8 @@ import {
 } from "../applicant.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Tiptap from "@/components/text-editor";
+import { ImageUpload } from "@/features/employers/components/employer-settings-form";
+import { cn } from "@/lib/utils";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -97,7 +99,7 @@ function ApplicantSettingsForm() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <div className="flex items-center gap-6 mb-6">
+            {/* <div className="flex items-center gap-6 mb-6">
               <div className="h-24 w-24 rounded-full bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 hover:border-gray-400 cursor-pointer transition">
                 <div className="text-center space-y-1">
                   <UploadCloud className="h-6 w-6 mx-auto text-muted-foreground" />
@@ -111,6 +113,37 @@ function ApplicantSettingsForm() {
                   Max file size is 5MB. Minimum dimensions: 150x150 (pixels)
                 </p>
                 <p>Suitable files are .jpg and .png</p>
+              </div>
+            </div> */}
+
+            <div className="flex items-center gap-6 mb-6">
+              <div className="">
+                <div className="text-center space-y-1">
+                  <Controller
+                    name="avatarUrl"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <div>
+                        <Label htmlFor="avatarUrl">Upload Logo</Label>
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          className={cn(
+                            fieldState.error &&
+                              "ring-1 ring-destructive/50 rounded-full",
+                            "h-34 w-34",
+                          )}
+                        />
+
+                        {fieldState.error && (
+                          <p className="text-destructive text-sm">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
