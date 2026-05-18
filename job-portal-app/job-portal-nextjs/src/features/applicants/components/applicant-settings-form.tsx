@@ -77,7 +77,7 @@ function ApplicantSettingsForm() {
 
   async function onSubmit(data: ApplicantSettingsSchema) {
     console.log("Saving Data: ", data);
-    console.log("Resume file: ", data?.resume?.[0]);
+    // console.log("Resume file: ", data?.resume?.[0]);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 

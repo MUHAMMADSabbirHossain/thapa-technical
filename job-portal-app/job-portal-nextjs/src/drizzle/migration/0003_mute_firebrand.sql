@@ -1,1 +1,0 @@
-ALTER TABLE `employers` RENAME COLUMN `website` TO `website_url`;

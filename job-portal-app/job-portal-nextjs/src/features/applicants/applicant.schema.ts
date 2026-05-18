@@ -41,18 +41,21 @@ export const applicantSettingsSchema = z.object({
     .string()
     .max(500, "Biography must be less than 500 characters")
     .optional(),
-  resume: z
-    .any()
-    .refine((files) => files?.length === 1, "Resume is required")
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      "Max file size is 5MB",
-    )
-    .refine(
-      (files) => ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
-      "Only .pdf format is supported",
-    ),
-  avatarUrl: z.string().optional().or(z.literal("")),
+  avatarUrl: z.string().optional(),
+
+  // resume: z
+  //   .any()
+  //   .refine((files) => files?.length === 1, "Resume is required")
+  //   .refine(
+  //     (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+  //     "Max file size is 5MB",
+  //   )
+  //   .refine(
+  //     (files) => ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
+  //     "Only .pdf format is supported",
+  //   ),
+  resumeUrl: z.url({ error: "Invalid url" }).optional().or(z.literal("")),
+  resumeName: z.string().optional(),
 });
 
 export type ApplicantSettingsSchema = z.infer<typeof applicantSettingsSchema>;
