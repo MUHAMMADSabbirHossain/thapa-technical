@@ -44,6 +44,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Tiptap from "@/components/text-editor";
 import { ImageUpload } from "@/features/employers/components/employer-settings-form";
 import { cn } from "@/lib/utils";
+import ResumeUpload from "./resume-upload";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -67,6 +68,7 @@ function ApplicantSettingsForm() {
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<ApplicantSettingsSchema>({
     resolver: zodResolver(applicantSettingsSchema),
@@ -454,7 +456,7 @@ function ApplicantSettingsForm() {
             <Separator />
 
             {/* Resume upload (visual only) */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <Label htmlFor="resume" className="text-base">
                 Resume / CV
               </Label>
@@ -469,6 +471,42 @@ function ApplicantSettingsForm() {
                   PDF (Max 2MB)
                 </p>
               </div>
+            </div> */}
+
+            <div className="space-y-4">
+              <Label htmlFor="resume" className="text-base">
+                Resume / CV
+              </Label>
+
+              <Controller
+                name="resumeUrl"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <div>
+                    <ResumeUpload
+                      value={field?.value}
+                      onChange={(url, name, size) => {
+                        // We update both fields in React Hook from when upload finisheds
+                        field.onChange(url);
+                        setValue("resumeName", name, {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        });
+                        setValue("resumeSize", size, {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        });
+                      }}
+                    />
+
+                    {fieldState.error && (
+                      <p className="text-destructive text-sm mt-2">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
           </CardContent>
         </Card>
