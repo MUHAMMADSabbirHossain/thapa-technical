@@ -1,0 +1,1 @@
+ALTER TABLE `applicants` RENAME COLUMN `merital_status` TO `marital_status`;
