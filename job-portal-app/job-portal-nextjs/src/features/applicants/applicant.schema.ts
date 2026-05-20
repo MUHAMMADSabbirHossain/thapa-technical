@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const GENDER_OPTIONS = ["male", "female", "other"] as const;
-export const MERITAL_STATUS_OPTIONS = [
+export const MARITAL_STATUS_OPTIONS = [
   "single",
   "married",
   "divorced",
@@ -29,8 +29,8 @@ export const applicantSettingsSchema = z.object({
   gender: z.enum(GENDER_OPTIONS, {
     error: () => "Please select a gender",
   }),
-  meritalStatus: z.enum(MERITAL_STATUS_OPTIONS, {
-    error: () => "Please select a merital status",
+  maritalStatus: z.enum(MARITAL_STATUS_OPTIONS, {
+    error: () => "Please select a marital status",
   }),
   education: z.enum(EDUCATION_OPTIONS, {
     error: () => "Please select an education",

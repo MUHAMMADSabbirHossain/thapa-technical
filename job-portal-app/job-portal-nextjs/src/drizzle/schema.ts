@@ -76,7 +76,7 @@ export const applicants = mysqlTable("applicants", {
   biography: text("biography"),
   dateOfBirth: datetime("date_of_birth"),
   nationality: varchar("nationality", { length: 100 }),
-  maritalStatus: mysqlEnum("merital_status", ["single", "married", "divorced"]),
+  maritalStatus: mysqlEnum("marital_status", ["single", "married", "divorced"]),
   gender: mysqlEnum("gender", ["male", "female", "other"]),
   education: mysqlEnum("education", [
     "none",

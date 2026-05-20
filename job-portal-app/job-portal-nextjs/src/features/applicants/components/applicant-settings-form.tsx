@@ -38,13 +38,14 @@ import {
   ApplicantSettingsSchema,
   EDUCATION_OPTIONS,
   GENDER_OPTIONS,
-  MERITAL_STATUS_OPTIONS,
+  MARITAL_STATUS_OPTIONS,
 } from "../applicant.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Tiptap from "@/components/text-editor";
 import { ImageUpload } from "@/features/employers/components/employer-settings-form";
 import { cn } from "@/lib/utils";
 import ResumeUpload from "./resume-upload";
+import { createApplicantProfile } from "../actions/applicant.action";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -81,9 +82,19 @@ function ApplicantSettingsForm() {
     console.log("Saving Data: ", data);
     // console.log("Resume file: ", data?.resume?.[0]);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const res = await createApplicantProfile(data);
 
-    toast.success("Profile updated successfully");
+      if (res?.status === "success") {
+        toast.success(res?.message);
+      } else {
+        toast.error(res?.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+
+      console.log("From Submission Error: ", error);
+    }
   }
 
   return (
@@ -299,9 +310,9 @@ function ApplicantSettingsForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="meritalStatus">Merital Status</Label>
+                <Label htmlFor="maritalStatus">Marital Status</Label>
                 <Controller
-                  name="meritalStatus"
+                  name="maritalStatus"
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -309,12 +320,12 @@ function ApplicantSettingsForm() {
                       value={field?.value}
                     >
                       <SelectTrigger
-                        className={`${errors.meritalStatus ? "border-destructive" : ""}`}
+                        className={`${errors.maritalStatus ? "border-destructive" : ""}`}
                       >
-                        <SelectValue placeholder="Select Merital Status" />
+                        <SelectValue placeholder="Select Marital Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        {MERITAL_STATUS_OPTIONS.map((option) => (
+                        {MARITAL_STATUS_OPTIONS.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
                           </SelectItem>
@@ -323,9 +334,9 @@ function ApplicantSettingsForm() {
                     </Select>
                   )}
                 />
-                {errors.meritalStatus && (
+                {errors.maritalStatus && (
                   <p className="text-destructive text-sm">
-                    {errors.meritalStatus.message}
+                    {errors.maritalStatus.message}
                   </p>
                 )}
               </div>
