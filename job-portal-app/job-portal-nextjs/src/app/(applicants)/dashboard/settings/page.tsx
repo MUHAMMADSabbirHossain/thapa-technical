@@ -1,6 +1,17 @@
 import ApplicantSettingsForm from "@/features/applicants/components/applicant-settings-form";
+import { getApplicantProfileData } from "@/features/applicants/server/applicant.queries";
+import { getCurrentUser } from "@/features/auth/server/auth.queries";
+import { redirect } from "next/navigation";
 
-function SettingsPage() {
+async function SettingsPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return redirect("/login");
+  }
+
+  const initialData = await getApplicantProfileData(user?.id);
+
   return (
     <div>
       {/* Header */}
@@ -11,7 +22,7 @@ function SettingsPage() {
         </p>
       </div>
 
-      <ApplicantSettingsForm />
+      <ApplicantSettingsForm initialData={initialData} />
     </div>
   );
 }

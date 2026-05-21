@@ -46,6 +46,7 @@ import { ImageUpload } from "@/features/employers/components/employer-settings-f
 import { cn } from "@/lib/utils";
 import ResumeUpload from "./resume-upload";
 import { createApplicantProfile } from "../actions/applicant.action";
+import { ApplicantProfileType } from "../server/applicant.queries";
 
 // Temporary Type Defination (Since Zod is removed for now)
 type ApplicantProfileData = {
@@ -63,7 +64,11 @@ type ApplicantProfileData = {
   biography: string;
 };
 
-function ApplicantSettingsForm() {
+interface ApplicantSettingsFormProps {
+  initialData?: ApplicantProfileType | null;
+}
+
+function ApplicantSettingsForm({ initialData }: ApplicantSettingsFormProps) {
   const {
     register,
     handleSubmit,
@@ -73,8 +78,8 @@ function ApplicantSettingsForm() {
     formState: { errors, isDirty, isSubmitting },
   } = useForm<ApplicantSettingsSchema>({
     resolver: zodResolver(applicantSettingsSchema),
-    defaultValues: {
-      email: "vinod@thapa.com",
+    defaultValues: initialData || {
+      email: "", // Fallback if no data at all
     },
   });
 
@@ -83,7 +88,9 @@ function ApplicantSettingsForm() {
     // console.log("Resume file: ", data?.resume?.[0]);
 
     try {
-      const res = await createApplicantProfile(data);
+      // const res = await createApplicantProfile(data);
+
+      const res =saveApplicantProfile await (data);
 
       if (res?.status === "success") {
         toast.success(res?.message);
