@@ -45,7 +45,10 @@ import Tiptap from "@/components/text-editor";
 import { ImageUpload } from "@/features/employers/components/employer-settings-form";
 import { cn } from "@/lib/utils";
 import ResumeUpload from "./resume-upload";
-import { createApplicantProfile } from "../actions/applicant.action";
+import {
+  createApplicantProfile,
+  saveApplicantProfile,
+} from "../actions/applicant.action";
 import { ApplicantProfileType } from "../server/applicant.queries";
 
 // Temporary Type Defination (Since Zod is removed for now)
@@ -83,6 +86,8 @@ function ApplicantSettingsForm({ initialData }: ApplicantSettingsFormProps) {
     },
   });
 
+  const isUpdating = !!initialData?.location; // Boolean coercion
+
   async function onSubmit(data: ApplicantSettingsSchema) {
     console.log("Saving Data: ", data);
     // console.log("Resume file: ", data?.resume?.[0]);
@@ -90,7 +95,7 @@ function ApplicantSettingsForm({ initialData }: ApplicantSettingsFormProps) {
     try {
       // const res = await createApplicantProfile(data);
 
-      const res =saveApplicantProfile await (data);
+      const res = await saveApplicantProfile(data);
 
       if (res?.status === "success") {
         toast.success(res?.message);
@@ -533,11 +538,18 @@ function ApplicantSettingsForm({ initialData }: ApplicantSettingsFormProps) {
         <div className="flex items-center gap-4">
           <Button
             type="submit"
-            disabled={isSubmitting}
+            // Disable the button if submitting or if the user hasn't changed any fields
+            disabled={isSubmitting || !isDirty}
             className="min-w-[150px]"
           >
             {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
-            {isSubmitting ? "saving..." : "Save changes"}
+            {isSubmitting
+              ? isUpdating
+                ? "Updating..."
+                : "Saving..."
+              : isUpdating
+                ? "Update Profile"
+                : "Save Profile"}
           </Button>
 
           {!isDirty && (
