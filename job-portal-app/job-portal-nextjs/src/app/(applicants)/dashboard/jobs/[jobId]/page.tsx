@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import db from "@/config/db";
 import { jobApplications, resumes, users } from "@/drizzle/schema";
+import ApplyJobModal from "@/features/applicants/jobs/components/apply-job-modal";
 import JobOverviewSidebar from "@/features/applicants/jobs/jobOverviewSidebar";
 import { getCurrentUser } from "@/features/auth/server/auth.queries";
 import { getJobById } from "@/features/employers/jobs/server/jobs.queries";
