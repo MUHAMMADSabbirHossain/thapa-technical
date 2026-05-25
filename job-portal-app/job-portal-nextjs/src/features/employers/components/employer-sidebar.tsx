@@ -21,6 +21,7 @@ const base = "/employer-dashboard";
 
 const navigationItems = [
   { name: "Overview", icon: LayoutDashboard, href: base + "/" },
+  { name: "Applications", icon: User, href: base + "/applications" },
   { name: "Employers Profile", icon: User },
   { name: "Post a Job", icon: Plus, href: base + "/jobs/create" },
   { name: "My Jobs", icon: Briefcase, href: base + "/jobs" },
