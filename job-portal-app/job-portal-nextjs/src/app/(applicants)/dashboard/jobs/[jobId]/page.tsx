@@ -50,7 +50,7 @@ const JobsDetailedPage = async ({ params }: EditJobPageProps) => {
 
     // Fetch their resumes for the dropdown
     userResumes = await db
-      .select({ id: resumes?.id, resumes: resumes?.fileName })
+      .select({ id: resumes?.id, fileName: resumes?.fileName })
       .from(resumes)
       .where(eq(resumes?.applicantId, user?.id));
   }

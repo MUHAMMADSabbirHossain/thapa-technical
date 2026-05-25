@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { applyForJobAction } from "../actions/apply-job.action";
 
 interface ApplyJobModalProps {
   jobId: number;
