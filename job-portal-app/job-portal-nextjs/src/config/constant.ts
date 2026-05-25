@@ -87,7 +87,7 @@ export const applicantNavItems: NavItem[] = [
   {
     name: "Applied",
     icon: Briefcase,
-    href: "/dashboard/applications",
+    href: "/dashboard/applied-jobs",
     badge: "dynamic", // Will show count of applied jobs
   },
   {
