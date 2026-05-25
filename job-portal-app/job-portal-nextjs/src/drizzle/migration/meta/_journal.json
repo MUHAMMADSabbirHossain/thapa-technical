@@ -57,6 +57,13 @@
       "when": 1779287784779,
       "tag": "0007_brainy_marvex",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1779640340731,
+      "tag": "0008_smart_black_bird",
+      "breakpoints": true
     }
   ]
 }
