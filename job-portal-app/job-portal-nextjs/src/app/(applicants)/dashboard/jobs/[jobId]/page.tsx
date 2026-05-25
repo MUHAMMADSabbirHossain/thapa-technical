@@ -1,10 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import db from "@/config/db";
+import { jobApplications, resumes, users } from "@/drizzle/schema";
 import JobOverviewSidebar from "@/features/applicants/jobs/jobOverviewSidebar";
+import { getCurrentUser } from "@/features/auth/server/auth.queries";
 import { getJobById } from "@/features/employers/jobs/server/jobs.queries";
 import { formatDistanceToNow } from "date-fns";
+import { and, eq } from "drizzle-orm";
 import { Building2, Clock, MapPin } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface EditJobPageProps {
@@ -18,6 +23,36 @@ const JobsDetailedPage = async ({ params }: EditJobPageProps) => {
   if (isNaN(parseInt(jobId))) return notFound();
 
   const job = await getJobById(parseInt(jobId));
+
+  if (!job) {
+    return notFound();
+  }
+
+  // Fetch user, Application status and resume
+  const user = await getCurrentUser();
+  let hasApplied = false;
+  let userResumes: { id: number; fileName: string }[] = [];
+
+  if (user) {
+    const existingApplication = await db
+      .select()
+      .from(jobApplications)
+      .where(
+        and(
+          eq(jobApplications?.jobId, parseInt(jobId)),
+          eq(jobApplications?.applicantId, user?.id),
+        ),
+      )
+      .limit(1);
+
+    hasApplied = existingApplication.length > 0;
+
+    // Fetch their resumes for the dropdown
+    userResumes = await db
+      .select({ id: resumes?.id, resumes: resumes?.fileName })
+      .from(resumes)
+      .where(eq(resumes?.applicantId, user?.id));
+  }
 
   return (
     <div className="container mx-auto max-w-6xl py-10 px-4 space-y-8">
@@ -67,11 +102,20 @@ const JobsDetailedPage = async ({ params }: EditJobPageProps) => {
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* ---Interactive Action Button--- */}
         <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
-          <Button size="lg" className="w-full md:w-auto font-semibold">
-            Apply Now
-          </Button>
+          {user ? (
+            <ApplyJobModal
+              jobId={job.id}
+              jobTitle={job?.title}
+              hasApplied={hasApplied}
+              resumes={userResumes}
+            />
+          ) : (
+            <Button size={"lg"} className="w-full md:w-auto font-semibold">
+              <Link href="/login">Login to Apply</Link>
+            </Button>
+          )}
         </div>
       </div>
 
