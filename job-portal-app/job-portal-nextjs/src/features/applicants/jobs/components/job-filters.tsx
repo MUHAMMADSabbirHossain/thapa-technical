@@ -40,22 +40,52 @@ function JobFilters() {
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
-  function updateFilters(newParams: Record<string, string | null>) {
+  // function updateFilters(newParams: Record<string, string | null>) {
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   console.log("newParams: ", newParams);
+
+  //   Object.entries(newParams).forEach(([key, value]) => {
+  //     const actualValue = value?.trim();
+
+  //     if (!actualValue || actualValue === "all") {
+  //       params.delete(key);
+  //     } else {
+  //       params.set(key, actualValue);
+  //     }
+  //   });
+
+  //   router.push(`?${params.toString()}`, { scroll: false });
+  // }
+
+  const updateFilters = (newParams: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
-    console.log("newParams: ", newParams);
+
+    // 1. Create a tracker to see if anything actually changed
+    let filterChanged = false;
 
     Object.entries(newParams).forEach(([key, value]) => {
       const actualValue = value?.trim();
+      const currentValue = params.get(key);
 
       if (!actualValue || actualValue === "all") {
-        params.delete(key);
+        if (params.has(key)) {
+          params.delete(key);
+          filterChanged = true;
+        }
       } else {
-        params.set(key, actualValue);
+        if (currentValue !== actualValue) {
+          params.set(key, actualValue);
+          filterChanged = true;
+        }
       }
     });
 
-    router.push(`?${params.toString()}`, { scroll: false });
-  }
+    // 2. Only reset the page and push to the router if a filter actually changed
+    if (filterChanged) {
+      params.set("page", "1");
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  };
 
   function clearFilters() {
     setJobLevel("");
