@@ -1,6 +1,6 @@
 import db from "@/config/db";
 import { employers, jobs, users } from "@/drizzle/schema";
-import { and, desc, eq, gte, isNull, like, or, SQL } from "drizzle-orm";
+import { and, desc, eq, gte, isNull, like, or, sql, SQL } from "drizzle-orm";
 
 // 2. Define the Interface
 export interface JobfilterParams {
@@ -8,15 +8,21 @@ export interface JobfilterParams {
   jobType?: string;
   jobLevel?: string;
   workType?: string;
+  page?: string;
+  limit?: string;
 }
 
 export const getAllJobs = async (filters: JobfilterParams) => {
+  const page = filters?.page ? Number(filters.page) : 1;
+  const limit = filters?.limit ? Number(filters.limit) : 10;
+  const offset = (page - 1) * limit;
+
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Reset time to 00:00:00.000
 
   // Base Rule
   const conditions: (SQL | undefined)[] = [
-    // isNull(jobs.deletedAt),s
+    isNull(jobs.deletedAt),
     or(isNull(jobs.expiredAt), gte(jobs.expiredAt, today)),
   ];
 
@@ -71,15 +77,31 @@ export const getAllJobs = async (filters: JobfilterParams) => {
     .innerJoin(employers, eq(jobs.employerId, employers.id))
     .innerJoin(users, eq(employers.id, users.id)) // Join users to get avatarUrl
     .where(and(...conditions))
-    .orderBy(desc(jobs.createdAt));
+    .orderBy(desc(jobs.createdAt))
+    .limit(limit)
+    .offset(offset);
 
-  return jobsData;
+  // 2. Fetch the total count for pagination math
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(jobs)
+    .innerJoin(employers, eq(jobs?.employerId, employers?.id))
+    .where(and(...conditions));
+
+  const totalCount = Number(countResult[0]?.count || 0);
+
+  return {
+    jobs: jobsData,
+    totalCount,
+  };
 };
 
 // AUTOMATIC TYPE EXPORT
 // This creates a type based on EXACTLY what getAllJobs returns.
 // If you change the query, the type will automatically update.
-export type JobCardType = Awaited<ReturnType<typeof getAllJobs>>[number];
+export type JobCardType = Awaited<
+  ReturnType<typeof getAllJobs>
+>["jobs"][number];
 
 export const getJobById = async (jobId: number) => {
   const job = await db
